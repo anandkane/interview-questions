@@ -2,21 +2,24 @@ package org.spearhead.tinybits.thread;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class AlternateThreadDemo {
+/**
+ * Objective is to have two threads print values alternately (possibly without using synchronization.
+ */
+public class AlternatingThreadDemo {
 
 	public static void main(String[] args) {
 		AtomicBoolean switchh = new AtomicBoolean(true);
-		new Thread(new AlternateThread("1", true, switchh)).start();
-		new Thread(new AlternateThread("2", false, switchh)).start();
+		new Thread(new AlternatingThread("1", true, switchh)).start();
+		new Thread(new AlternatingThread("2", false, switchh)).start();
 	}
 }
 
-class AlternateThread implements Runnable {
+class AlternatingThread implements Runnable {
 	private String printIt;
 	private boolean valueToCheck;
 	private AtomicBoolean switchh;
 
-	public AlternateThread(String printIt, boolean valueToCheck, AtomicBoolean switchh) {
+	public AlternatingThread(String printIt, boolean valueToCheck, AtomicBoolean switchh) {
 		this.printIt = printIt;
 		this.valueToCheck = valueToCheck;
 		this.switchh = switchh;
