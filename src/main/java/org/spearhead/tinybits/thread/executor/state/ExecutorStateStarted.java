@@ -20,7 +20,7 @@ public class ExecutorStateStarted extends AbstractExecutorState {
 
 	@Override
 	public Future submit(Callable<?> callable) {
-		FutureImpl future = new FutureImpl(callable);
+		FutureImpl future = new FutureImpl("", callable);
 		taskQueue.add(future);
 		return future;
 	}

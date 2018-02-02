@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 public class CallableWrapper<T extends Object> implements Callable<T> {
 	private Callable<T> callable;
-	private Future<T> future = new FutureImpl(callable);
+	private Future<T> future = new FutureImpl("", callable);
 
 	public CallableWrapper(Callable<T> callable) {
 		this.callable = callable;

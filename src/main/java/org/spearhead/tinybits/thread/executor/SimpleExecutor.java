@@ -15,13 +15,14 @@ public class SimpleExecutor implements Executor {
 	private ConcurrentLinkedQueue<Future> taskQueue = new ConcurrentLinkedQueue();
 	private Queue<WorkerThread> workerQueue = new ArrayDeque<>(WORKER_COUNT);
 	private ExecutorState state = new ExecutorStateCreated(this.taskQueue);
-	private AtomicBoolean shutDownSignalled = new AtomicBoolean(true);
+	private final AtomicBoolean shutDownSignalled = new AtomicBoolean(false);
 
 	public SimpleExecutor() {
 		for (int i = 0; i < WORKER_COUNT - 1; i++) {
-			new WorkerThread(shutDownSignalled, workerQueue);
+			new WorkerThread("Worker-Thread" + (i + 1), shutDownSignalled, workerQueue);
 		}
 		assignerThread = new AssignerThread(taskQueue, workerQueue, shutDownSignalled);
+		assignerThread.setName("Assigner-Thread");
 		assignerThread.start();
 	}
 
@@ -47,9 +48,6 @@ public class SimpleExecutor implements Executor {
 
 	@Override
 	public <T> Future<T> submit(Callable<T> callable) {
-		Future<T> future = state.submit(callable);
-		assignerThread.interrupt();
-
-		return future;
+		return (Future<T>) state.submit(callable);
 	}
 }

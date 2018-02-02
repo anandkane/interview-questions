@@ -1,12 +1,15 @@
 package org.spearhead.tinybits.thread.executor;
 
+import org.apache.log4j.Logger;
+
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AssignerThread extends Thread {
+	private static Logger logger = Logger.getLogger(AssignerThread.class);
 	private Queue<Future> taskQueue;
 	private Queue<WorkerThread> workerQueue;
-	private AtomicBoolean shutDownSignalled;
+	volatile private AtomicBoolean shutDownSignalled;
 
 	public AssignerThread(Queue<Future> taskQueue, Queue<WorkerThread> workerQueue, AtomicBoolean shutDownSignalled) {
 		this.taskQueue = taskQueue;
@@ -17,22 +20,26 @@ public class AssignerThread extends Thread {
 	@Override
 	public void run() {
 		try {
-			workerQueue.forEach((workerThread) -> workerThread.start());
+			workerQueue.forEach((workerThread) -> {
+				workerThread.start();
+			});
 
 			while (!shutDownSignalled.get()) {
 				Future poll;
 				while ((poll = taskQueue.poll()) == null) {
 					sleep(1000);
-					continue;
 				}
+				logger.debug("Popped future " + poll + " for execution");
+
 				WorkerThread worker;
 				while ((worker = workerQueue.poll()) == null) {
 					sleep(100);
-					continue;
 				}
+				logger.debug("Removed worker thread " + worker.getName() + " from worker queue");
 				worker.setFuture(poll).interrupt();
 			}
 		} catch (InterruptedException e) {
+			logger.debug("Assigner thread interrupted.");
 		}
 	}
 

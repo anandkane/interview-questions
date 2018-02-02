@@ -7,8 +7,10 @@ public class FutureImpl<T extends Object> implements Future<T> {
 	private AtomicBoolean completed = new AtomicBoolean(false);
 	private Callable<T> callable;
 	private T result;
+	private String name;
 
-	public FutureImpl(Callable<T> callable) {
+	public FutureImpl(String name, Callable<T> callable) {
+		this.name = name;
 		this.callable = callable;
 	}
 
