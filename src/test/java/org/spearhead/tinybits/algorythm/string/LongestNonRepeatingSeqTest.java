@@ -1,4 +1,4 @@
-package org.spearhead.tinybits.algorythm;
+package org.spearhead.tinybits.algorythm.string;
 
 import org.junit.Test;
 
